@@ -6,12 +6,19 @@ const router = createRouter({
 		{
 			path: '/welcome',
 			name: 'welcome',
-			component: async () => await import('@/views/welcome/WelcomeView.vue')
-		},
-		{
-			path: '/sign-in',
-			name: 'signIn',
-			component: async () => await import('@/views/SignUp&In/SignPage.vue')
+			component: async () => await import('@/views/Welcome/WelcomeView.vue'),
+			children: [
+				{
+					path: '/sign-in',
+					name: 'signIn',
+					component: async () => await import('@/views/Welcome/WelcomeView.vue')
+				},
+				{
+					path: '/sign-up',
+					name: 'signUp',
+					component: async () => await import('@/views/Welcome/WelcomeView.vue')
+				}
+			]
 		}
 	]
 })

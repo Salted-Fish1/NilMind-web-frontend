@@ -1,23 +1,17 @@
 <script setup lang="ts">
 interface IProps {
-	labelWidth?: number
+	msg: string
 }
 
 const props = defineProps<IProps>()
 </script>
 
 <template>
-	<div class="form">
+	<div class="form-item">
+		<div class="msg">{{ props.msg }}</div>
 		<slot></slot>
 	</div>
 </template>
 
 <style scoped lang="less">
-.form {
-
-}
-:slotted(.msg) {
-	background-color: aqua;
-	width: v-bind('$props.labelWidth')px
-}
 </style>

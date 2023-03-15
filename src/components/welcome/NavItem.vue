@@ -41,17 +41,34 @@ const handleSelectLocalFile = () => {
 </template>
 
 <style scoped lang="less">
+.start-nav::before {
+	content: "";
+	backdrop-filter: blur(10px);
+
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+
+	z-index: -1;
+
+	animation: fadeInOut 1s ease-in;
+	background-color: rgba(255, 255, 255, 0.5);
+}
 .start-nav {
+	position: relative;
 	height: 100%;
-	flex: 1 0 0;
+	animation: fadeInOut 0.5s ease-in-out;
+	z-index: 10;
 }
 
 :deep(.nav) {
 	flex: 1 0 0;
 	justify-content: flex-end;
 	align-items: center;
-	background-color: #F5F5F5;
-	border-right: 1px solid #C0C0C0;
+	// background-color: #F5F5F5;
+	// border-right: 1px solid #C0C0C0;
 
 	height: 100%;
 }
@@ -93,10 +110,19 @@ const handleSelectLocalFile = () => {
 
 .nav-btn {
 	background-color: #FFFFFF;
-	box-shadow: 0px 0px 12px rgba(0, 0, 0, .12);
+	// box-shadow: 0px 0px 12px rgba(0, 0, 0, .12);
 }
 
 .no-show {
 	display: none;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>
