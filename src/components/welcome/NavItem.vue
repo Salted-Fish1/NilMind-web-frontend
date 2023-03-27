@@ -6,12 +6,12 @@ const navItems = ref<INavItem[]>([
 	{
 		name: 'Workplace',
 		key: 'workplace',
-		icon: 'src/assets/time.svg'
+		icon: 'node_modules/feather-icons/dist/icons/clock.svg'
 	},
 	{
 		name: 'Template',
 		key: 'template',
-		icon: 'src/assets/list.svg'
+		icon: 'node_modules/feather-icons/dist/icons/list.svg'
 	}
 ])
 

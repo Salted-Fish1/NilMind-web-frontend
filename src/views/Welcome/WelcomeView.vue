@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import LeftRightLayout, { IProps } from '@/components/Demo/LeftRightLayout.vue'
+import LeftRightLayout, { IProps } from '@/components/Layout/LeftRightLayout.vue'
 import { ref, computed, watch, shallowRef } from 'vue'
 
 import NavItem from '@/components/welcome/NavItem.vue'

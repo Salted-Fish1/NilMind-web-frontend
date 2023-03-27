@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ItemSelector, { IType } from '@/basicComp/ItemSelector/ItemSelector.vue'
+import ItemSelector, { IItem, IType } from '@/basicComp/ItemSelector/ItemSelector.vue'
 import router from '@/router'
 import { ref } from 'vue'
 import BasicDivider from '@/basicComp/Divider/BasicDivider.vue'
@@ -37,6 +37,21 @@ const types = ref<IType[]>([
 const handleSignOut = () => {
 	router.push({ name: 'signIn' })
 }
+
+const ItemClickMapper = new Map([
+	['new', () => {
+		router.push({ name: 'mindMap', params: { id: 'new' } })
+	}]
+])
+
+const handleItemClick = (item: IItem) => {
+	const getHandler = ItemClickMapper.get(item.key)
+	const handler = getHandler ?? (() => {
+		console.log('no spefic handler')
+	})
+	handler()
+}
+
 </script>
 
 <template>
@@ -48,7 +63,7 @@ const handleSignOut = () => {
 				<div class="sign-out" @click="handleSignOut">Sign Out</div>
 			</div>
 		</div>
-		<item-selector :types="types"></item-selector>
+		<item-selector :types="types" @item-click="handleItemClick" />
 	</div>
 </template>
 

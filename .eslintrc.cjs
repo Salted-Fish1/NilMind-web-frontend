@@ -27,6 +27,7 @@ module.exports = {
 		'no-tabs': ['error', { allowIndentationTabs: true }],
 		indent: ['error', 'tab'],
 		'@typescript-eslint/explicit-function-return-type': 'off',
-		'@typescript-eslint/indent': 'off'
+		'@typescript-eslint/indent': 'off',
+		'@typescript-eslint/no-non-null-assertion': 'off'
 	}
 }

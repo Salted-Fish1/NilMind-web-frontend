@@ -16,11 +16,15 @@ export interface IType {
 interface IProps {
 	types: IType[]
 }
-
 const props = defineProps<IProps>()
 
+interface IEmits {
+	(e: 'ItemClick', item: IItem): void
+}
+const emits = defineEmits<IEmits>()
+
 const handleItemClick = (item: IItem) => {
-	console.log(item)
+	emits('ItemClick', item)
 }
 </script>
 
