@@ -40,6 +40,11 @@ const router = createRouter({
 				}
 				return true
 			}
+		},
+		{
+			path: '/shortcut',
+			name: 'shortcut',
+			component: async () => await import('@/views/ShortCut.vue')
 		}
 	]
 })

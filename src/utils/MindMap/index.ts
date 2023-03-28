@@ -188,9 +188,173 @@ const fetchCreateNewMainProjectData = async () => {
 	return mainProject
 }
 
+const createNewNode = (IDGenerator: Generator<string, string, null>) => {
+	const newNode: workFormat.INode = {
+		id: IDGenerator.next().value,
+		title: 'New Topic'
+	}
+
+	return newNode
+}
+
+const addNextSibling = (curNode: workFormat.INode, IDGenerator: Generator<string, string, null>, project: workFormat.IProject) => {
+	console.log('trigger')
+
+	if (curNode.parentNode == null) {
+		return curNode
+	}
+	if (curNode.parentNode.children == null) {
+		throw new Error('wrong tree struct')
+	}
+
+	const newNode = createNewNode(IDGenerator)
+
+	const curIndex = curNode.parentNode.children.findIndex((value) => {
+		return curNode.id === value.id
+	})
+
+	curNode.parentNode.children.splice(curIndex + 1, 0, newNode)
+	newNode.parentNode = curNode.parentNode
+
+	if (curNode.nextSibling != null) {
+		newNode.nextSibling = curNode.nextSibling
+		curNode.nextSibling.previousSibling = newNode
+	}
+	newNode.previousSibling = curNode
+	curNode.nextSibling = newNode
+	if (curNode.level != null) {
+		newNode.level = curNode.level
+	}
+	project.rootTopic.set(newNode.id, newNode)
+
+	return newNode
+}
+
+const addPreviousSibling = (curNode: workFormat.INode, IDGenerator: Generator<string, string, null>, project: workFormat.IProject) => {
+	if (curNode.parentNode == null) {
+		return curNode
+	}
+	if (curNode.parentNode.children == null) {
+		throw new Error('wrong tree struct')
+	}
+
+	const newNode = createNewNode(IDGenerator)
+
+	const curIndex = curNode.parentNode.children.findIndex((value) => {
+		return curNode.id === value.id
+	})
+
+	curNode.parentNode.children.splice(curIndex, 0, newNode)
+	newNode.parentNode = curNode.parentNode
+	if (curNode.level != null) {
+		newNode.level = curNode.level
+	}
+
+	if (curNode.previousSibling != null) {
+		newNode.previousSibling = curNode.previousSibling
+		curNode.previousSibling.nextSibling = newNode
+	}
+	newNode.nextSibling = curNode
+	curNode.previousSibling = newNode
+
+	project.rootTopic.set(newNode.id, newNode)
+	return newNode
+}
+
+const moveSelectedLeft = (curNode: workFormat.INode) => {
+	if (curNode.parentNode != null) {
+		curNode.parentNode.lastVisitedChild = curNode
+		return curNode.parentNode
+	}
+	return curNode
+}
+
+const moveSelectedRight = (curNode: workFormat.INode) => {
+	if (curNode.children == null) {
+		return curNode
+	}
+	if (curNode.lastVisitedChild != null) {
+		return curNode.lastVisitedChild
+	}
+	curNode.lastVisitedChild = curNode.children[0]
+	return curNode.lastVisitedChild
+}
+
+const moveSelectedUp = (curNode: workFormat.INode) => {
+	if (curNode.previousSibling != null) {
+		return curNode.previousSibling
+	}
+	return curNode
+}
+
+const moveSelectedDown = (curNode: workFormat.INode) => {
+	if (curNode.nextSibling != null) {
+		return curNode.nextSibling
+	}
+	return curNode
+}
+
+const addChild = (curNode: workFormat.INode, IDGenerator: Generator<string, string, null>, project: workFormat.IProject) => {
+	if (curNode.children == null) {
+		curNode.children = []
+	}
+	const newNode = createNewNode(IDGenerator)
+	newNode.parentNode = curNode
+	if (curNode.level != null) {
+		newNode.level = curNode.level + 1
+	}
+	project.rootTopic.set(newNode.id, newNode)
+	curNode.children.push(newNode)
+
+	const previousSiblingIndex = curNode.children.findIndex((value) => {
+		return value.id === newNode.id
+	}) - 1
+
+	if (curNode.children[previousSiblingIndex] !== undefined) {
+		newNode.previousSibling = curNode.children[previousSiblingIndex]
+		curNode.children[previousSiblingIndex].nextSibling = newNode
+	}
+	return newNode
+}
+
+const deleteNode = (curNode: workFormat.INode, project: workFormat.IProject) => {
+	const parentNode = curNode.parentNode
+	if (parentNode == null) {
+		return
+	}
+	project.rootTopic.delete(curNode.id)
+	const curIndex = parentNode.children!.findIndex((value) => {
+		return value.id === curNode.id
+	})
+	parentNode.children?.splice(curIndex, 1)
+
+	const previousSibling = curNode.previousSibling
+	const nextSibling = curNode.nextSibling
+	if ((previousSibling != null) && (nextSibling != null)) {
+		previousSibling.nextSibling = nextSibling
+		nextSibling.previousSibling = previousSibling
+	} else if (previousSibling == null && nextSibling != null) {
+		delete nextSibling.previousSibling
+	} else if (previousSibling != null && nextSibling == null) {
+		delete previousSibling.nextSibling
+	}
+
+	curNode.children?.forEach((value) => {
+		deleteNode(value, project)
+	})
+}
+
 export {
 	getFakeData,
 	makeIDGenerator,
 	fetchMainProjectData,
-	fetchCreateNewMainProjectData
+	fetchCreateNewMainProjectData,
+	addNextSibling,
+	moveSelectedLeft,
+	moveSelectedRight,
+	moveSelectedUp,
+	moveSelectedDown,
+	addChild,
+	addPreviousSibling,
+	deleteNode
 }

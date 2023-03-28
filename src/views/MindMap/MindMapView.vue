@@ -3,10 +3,18 @@ import MenuBar from '@/components/MindMap/MenuBar/MenuBar.vue'
 import MindMapEditor from '@/components/MindMap/Editor/MindMapEditor.vue'
 import TabBar from '@/components/MindMap/TabBar/TabBar.vue'
 
+import { useWorkingProjectStore } from '@/stores/workingProject'
+
+const store = useWorkingProjectStore()
 </script>
 
 <template>
-	<div class="mind-map">
+	<div
+		class="mind-map"
+		tabindex="0"
+		@keydown="(event) => store.inputEventManager.handleInputEvent(event)"
+		@blur="store.inputEventManager.handleBlurEvent"
+	>
 		<menu-bar />
 		<mind-map-editor />
 		<tab-bar />
@@ -16,13 +24,16 @@ import TabBar from '@/components/MindMap/TabBar/TabBar.vue'
 <style scoped lang="less">
 .mind-map {
 	height: 100vh;
-	// height: 100%;
 
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 
 	animation: expand 0.5s ease-in-out;
+}
+
+.mind-map:focus {
+	outline: none;
 }
 
 @keyframes expand {

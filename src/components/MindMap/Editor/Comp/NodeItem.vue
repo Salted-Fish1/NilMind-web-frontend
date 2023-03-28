@@ -23,12 +23,31 @@ const nodeClass = computed(() => {
 	if (level <= 5) { return `h${level}` }
 	return 'p'
 })
+
+const isSelected = computed(() => {
+	return store.selected.has(currentNode.value.id)
+})
+
+const handleClickCurrentNode = (event: MouseEvent) => {
+	if (!isSelected.value) {
+		store.addSelected(currentNode.value.id)
+	} else {
+		store.removeSelected(currentNode.value.id)
+	}
+}
+
 </script>
 
 <template>
 	<div class="node-item">
-		<div class="parent" :class="nodeClass">
-			{{ currentNode.title }}
+		<div
+			class="parent"
+			:class="[nodeClass, {selected: isSelected}]"
+			@click="handleClickCurrentNode"
+		>
+			<div>{{ currentNode.id.split('/')[1] }}</div>
+			<div>Pre: {{ currentNode.previousSibling?.id.split('/')[1] }}</div>
+			<div>Nex: {{ currentNode.nextSibling?.id.split('/')[1] }}</div>
 		</div>
 		<div class="children" v-if="currentNode.children">
 			<template v-for="item of currentNode.children" :key="item.id">
@@ -55,12 +74,11 @@ const nodeClass = computed(() => {
 }
 
 .selected {
-	// box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
-	box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+	box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }
 
 .h1 {
-	font-size: 2.25em;
+	font-size: 36px;
 	line-height: 1.2;
 
 	color: black;

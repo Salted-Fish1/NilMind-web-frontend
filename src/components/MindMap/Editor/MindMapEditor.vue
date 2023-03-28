@@ -30,6 +30,8 @@ const rootTopicNode = computed(() => {
 
 	background-color: v-bind(backgroundColor);
 	color: white;
+
+	overflow-y: scroll;
 }
 
 </style>
