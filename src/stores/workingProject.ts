@@ -49,6 +49,8 @@ export const useWorkingProjectStore = defineStore('workingProject', {
 			['isMultiSelected', false]
 		])
 
+		const inputEventArgs: unknown = undefined
+
 		return {
 			project,
 			rootTopicNode,
@@ -56,6 +58,7 @@ export const useWorkingProjectStore = defineStore('workingProject', {
 			selected,
 			state,
 			inputEventManager: new ShortcutManager(getInputEventManagerConfig()),
+			inputEventArgs,
 			operationGatewayMap: new Map<string, boolean>(getOperationGatewayMapConfig())
 		}
 	},
@@ -125,13 +128,18 @@ export const useWorkingProjectStore = defineStore('workingProject', {
 			})
 		},
 		deleteSelected () {
+			const newSelectedArr: workFormat.INode[] = []
 			this.selected.forEach((value) => {
 				const node = this.project.rootTopic.get(value)
 				if (node != null) {
-					deleteNode(node, this.project)
+					const newSelected = deleteNode(node, this.project)
+					newSelectedArr.push(newSelected)
 				}
 			})
 			this.clearSelected()
+			newSelectedArr.forEach((value) => {
+				this.selected.add(value.id)
+			})
 		},
 		moveSelectedLeft () {
 			const newSelectedArr: workFormat.INode[] = []

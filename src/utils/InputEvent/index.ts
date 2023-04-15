@@ -5,14 +5,14 @@ enum modifierKeys {
 }
 
 class ShortcutManager {
-	actionMap = new Map<string, () => void>([
+	actionMap = new Map<string, (...arg: unknown[]) => void>([
 	])
 
 	actionDevider = '-'
 
 	static readonly modifierKeys = modifierKeys
 
-	constructor (actionsArr: Array<[string[], () => void]>) {
+	constructor (actionsArr: Array<[string[], (...arg: unknown[]) => void]>) {
 		actionsArr.forEach((action) => {
 			this.actionMap.set(action[0].join(this.actionDevider), action[1])
 		})
@@ -36,6 +36,7 @@ class ShortcutManager {
 
 	handleInputEvent (
 		event: KeyboardEvent,
+		args?: unknown,
 		keyArr?: string[],
 		callback?: (keyArr: string[]) => void,
 		inputRules: (event: KeyboardEvent) => boolean = (event: KeyboardEvent) => {
@@ -46,6 +47,11 @@ class ShortcutManager {
 		}
 	) {
 		event.preventDefault()
+
+		if (args == null) {
+			args = []
+		}
+
 		if (keyArr == null) {
 			keyArr = []
 		}
@@ -65,8 +71,52 @@ class ShortcutManager {
 		const key = keyArr.join(this.actionDevider)
 		const handler = this.actionMap.get(key)
 
+		console.log(key)
+
 		if (handler != null) {
-			handler()
+			handler(args)
+		}
+
+		if (callback != null) {
+			callback(keyArr)
+		}
+	}
+
+	handleClickEvent (
+		event: MouseEvent,
+		args?: unknown,
+		keyArr?: string[],
+		callback?: (keyArr: string[]) => void,
+		inputRules?: (event: MouseEvent) => boolean
+	) {
+		event.preventDefault()
+
+		if (args == null) {
+			args = []
+		}
+
+		if (keyArr == null) {
+			keyArr = []
+		}
+		keyArr.splice(0)
+
+		const validationResult =
+				inputRules !== undefined
+					? inputRules(event)
+					: true
+		if (!validationResult) {
+			return
+		}
+
+		this.getModifierKeys(event, keyArr)
+		keyArr.push(event.type)
+
+		const key = keyArr.join(this.actionDevider)
+
+		const handler = this.actionMap.get(key)
+
+		if (handler != null) {
+			handler(args)
 		}
 
 		if (callback != null) {

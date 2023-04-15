@@ -32,6 +32,7 @@ const rootTopicNode = computed(() => {
 	color: white;
 
 	overflow-y: scroll;
+	overflow-x: scroll;
 }
 
 </style>

@@ -4,15 +4,21 @@ import MindMapEditor from '@/components/MindMap/Editor/MindMapEditor.vue'
 import TabBar from '@/components/MindMap/TabBar/TabBar.vue'
 
 import { useWorkingProjectStore } from '@/stores/workingProject'
+import { computed } from 'vue'
 
 const store = useWorkingProjectStore()
+const inputEventArgs = computed(() => {
+	return store.inputEventArgs
+})
+
 </script>
 
 <template>
 	<div
 		class="mind-map"
 		tabindex="0"
-		@keydown="(event) => store.inputEventManager.handleInputEvent(event)"
+		@keydown="(event) => store.inputEventManager.handleInputEvent(event, inputEventArgs)"
+		@click="(event) => store.inputEventManager.handleClickEvent(event, inputEventArgs)"
 		@blur="store.inputEventManager.handleBlurEvent"
 	>
 		<menu-bar />
@@ -33,6 +39,7 @@ const store = useWorkingProjectStore()
 }
 
 .mind-map:focus {
+	border: none;
 	outline: none;
 }
 

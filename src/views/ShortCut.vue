@@ -21,6 +21,8 @@ const handler = (keyArr: string[]) => {
 		class="div"
 		tabindex="0"
 		@keydown="(event) => mindmapShortcutManager.handleInputEvent(event, keyArr, handler)"
+		@click="(event) => mindmapShortcutManager.handleClickEvent(event)"
+		@contextmenu="(event) => mindmapShortcutManager.handleClickEvent(event)"
 		@blur="mindmapShortcutManager.handleBlurEvent"
 	>
 		{{ keyArr }}

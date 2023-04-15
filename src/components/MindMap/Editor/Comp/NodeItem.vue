@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWorkingProjectStore } from '@/stores/workingProject'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 interface IProps {
 	currentNodeID: string
@@ -29,21 +29,54 @@ const isSelected = computed(() => {
 })
 
 const handleClickCurrentNode = (event: MouseEvent) => {
-	if (!isSelected.value) {
-		store.addSelected(currentNode.value.id)
-	} else {
-		store.removeSelected(currentNode.value.id)
+	store.inputEventArgs = props.currentNodeID
+	setTimeout(() => {
+		store.inputEventArgs = undefined
+	})
+}
+
+const isDrag = ref(false)
+
+const handleDragStart = () => {
+	console.log('handleDragStart')
+	isDrag.value = true
+}
+const handleDragEnd = () => {
+	console.log('handleDragEnd')
+	isDrag.value = false
+}
+
+const handleOnDrag = () => {
+	console.log('onDrag')
+}
+
+const isDragOver = ref(false)
+const handleDragEnter = () => {
+	console.log('handleDragEnter')
+	isDragOver.value = true
+}
+const handleDragLeave = (event: DragEvent) => {
+	if ((event.currentTarget as HTMLElement)?.contains(event.relatedTarget as HTMLElement)) {
+		return
 	}
+	console.log('handleDragLeave')
+	isDragOver.value = false
 }
 
 </script>
 
 <template>
-	<div class="node-item">
+	<div class="node-item" :class="{dragging: isDrag}">
 		<div
 			class="parent"
-			:class="[nodeClass, {selected: isSelected}]"
+			:class="[nodeClass, {selected: isSelected}, {dragover: isDragOver}]"
 			@click="handleClickCurrentNode"
+			draggable="true"
+			@dragstart="handleDragStart"
+			@dragend="handleDragEnd"
+			@drag="handleOnDrag"
+			@dragleave="handleDragLeave"
+			@dragenter="handleDragEnter"
 		>
 			<div>{{ currentNode.id.split('/')[1] }}</div>
 			<div>Pre: {{ currentNode.previousSibling?.id.split('/')[1] }}</div>
@@ -62,19 +95,46 @@ const handleClickCurrentNode = (event: MouseEvent) => {
 	display: flex;
 
 	user-select: none;
+	outline: 5px dashed silver;
 }
 
 .parent {
 	align-self: center;
 }
 
+.parent:hover {
+	box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+	animation: fadeInOut 0.1s ease-in-out;
+}
+
 .children {
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
 }
 
 .selected {
 	box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+	animation: fadeInOut 0.05s ease-in-out;
+}
+
+.selected:hover {
+	box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset,
+	rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+
+.dragging {
+	opacity: 0.5;
+}
+
+.dragover {
+	outline: 7px solid white;
+}
+
+@keyframes fadeInOut {
+  0% {
+    box-shadow: none;
+  }
 }
 
 .h1 {

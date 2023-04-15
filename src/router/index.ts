@@ -31,8 +31,11 @@ const router = createRouter({
 			component: async () => await import('@/views/MindMap/MindMapView.vue'),
 			beforeEnter: async (to, from) => {
 				const mainProjectStore = useMainProjectStore()
+				console.log(to.params)
+
 				if (typeof to.params.id === 'string') {
 					if (to.params.id === 'new') {
+						console.log('yes')
 						await mainProjectStore.create()
 					} else {
 						await mainProjectStore.init(to.params.id)

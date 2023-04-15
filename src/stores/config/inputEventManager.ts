@@ -1,7 +1,7 @@
 import { useWorkingProjectStore } from '../workingProject'
 const getInputEventManagerConfig = () => {
 	const store = useWorkingProjectStore()
-	const inputEventManagerConfig: Array<[string[], () => void]> = [
+	const inputEventManagerConfig: Array<[string[], (arg: unknown) => void]> = [
 		[
 			['Enter'], () => {
 				store.addNextSibling()
@@ -45,6 +45,22 @@ const getInputEventManagerConfig = () => {
 		[
 			['Delete'], () => {
 				store.deleteSelected()
+			}
+		],
+		[
+			['Backspace'], () => {
+				store.deleteSelected()
+			}
+		],
+		[
+			['click'], (id: string) => {
+				store.clearSelected()
+				store.selected.add(id)
+			}
+		],
+		[
+			['Control-click'], (id: string) => {
+				store.selected.add(id)
 			}
 		]
 	]

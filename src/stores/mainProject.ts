@@ -23,7 +23,10 @@ export const useMainProjectStore = defineStore('mainProject', {
 			this.setCurrentProjectID()
 		},
 		async create () {
+			console.log('create')
+
 			this.mainProject = await fetchCreateNewMainProjectData()
+			console.log('create')
 			this.setCurrentProjectID()
 		},
 		setCurrentProjectID () {

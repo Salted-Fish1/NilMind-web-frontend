@@ -46,6 +46,8 @@ const ItemClickMapper = new Map([
 
 const handleItemClick = (item: IItem) => {
 	const getHandler = ItemClickMapper.get(item.key)
+	console.log(getHandler)
+
 	const handler = getHandler ?? (() => {
 		console.log('no spefic handler')
 	})

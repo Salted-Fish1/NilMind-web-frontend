@@ -69,7 +69,7 @@ const getFakeData = (generator: Generator<string, string, null>, key: string) =>
 }
 
 const getFakeDataByRequest = async () => {
-	const result = await axios.get('http://localhost:4000/data.json')
+	const result = await axios.get('http://localhost:5173/data.json')
 
 	return result
 }
@@ -181,7 +181,9 @@ const fetchMainProjectData = async (mainProjectID: string) => {
 }
 
 const fetchCreateNewMainProjectData = async () => {
+	console.log('createData')
 	const createData = (await getFakeDataByRequest()).data as storageFormat.IMainProject
+	console.log(createData)
 
 	const mainProject = storageFormatToWorkFormat(createData.projectID, 'Untitled')
 
@@ -198,8 +200,6 @@ const createNewNode = (IDGenerator: Generator<string, string, null>) => {
 }
 
 const addNextSibling = (curNode: workFormat.INode, IDGenerator: Generator<string, string, null>, project: workFormat.IProject) => {
-	console.log('trigger')
-
 	if (curNode.parentNode == null) {
 		return curNode
 	}
@@ -320,13 +320,16 @@ const addChild = (curNode: workFormat.INode, IDGenerator: Generator<string, stri
 const deleteNode = (curNode: workFormat.INode, project: workFormat.IProject) => {
 	const parentNode = curNode.parentNode
 	if (parentNode == null) {
-		return
+		return curNode
 	}
 	project.rootTopic.delete(curNode.id)
 	const curIndex = parentNode.children!.findIndex((value) => {
 		return value.id === curNode.id
 	})
 	parentNode.children?.splice(curIndex, 1)
+	if (parentNode.lastVisitedChild === curNode) {
+		delete parentNode.lastVisitedChild
+	}
 
 	const previousSibling = curNode.previousSibling
 	const nextSibling = curNode.nextSibling
@@ -342,6 +345,8 @@ const deleteNode = (curNode: workFormat.INode, project: workFormat.IProject) => 
 	curNode.children?.forEach((value) => {
 		deleteNode(value, project)
 	})
+
+	return parentNode
 }
 
 export {
